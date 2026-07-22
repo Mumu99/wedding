@@ -150,6 +150,16 @@
     .reveal.in .word:nth-child(5) { transition-delay: .7s; }
     .reveal.in .word:nth-child(6) { transition-delay: .85s; }
 
+    /* Hero 标题和 Footer 标题没有 .reveal 父级，.word 需要直接可见 */
+    .hero-title .word,
+    footer .end-title .word {
+      opacity: 1;
+      transform: translateY(0) rotate(0);
+    }
+    .hero-title .word.ex {
+      transform: rotate(8deg);
+    }
+
     /* 图片 clip-path 揭幕（Apple 同款）—— 从下到上撕开 */
     .clip-reveal {
       clip-path: inset(100% 0 0 0);
@@ -1394,7 +1404,7 @@
       <p>请把这一天，留给我们～</p>
 
       <div class="letter-sign">
-        坡林 <span class="heart">♥</span> 明珠
+        XIONG <span class="heart">♥</span> DAI
       </div>
     </div>
   </div>
