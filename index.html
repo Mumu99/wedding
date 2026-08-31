@@ -17,8 +17,12 @@
   <meta property="og:description" content="2026年10月3日 · 江西修水 · 来一起当一天的傻瓜吧！🎉💖" />
   <meta property="og:url" content="https://www.xiongdai1003.top/" />
   <meta property="og:image" content="https://www.xiongdai1003.top/share-cover.jpg" />
+  <meta property="og:image:secure_url" content="https://www.xiongdai1003.top/share-cover.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="800" />
-  <meta property="og:image:height" content="640" />
+  <meta property="og:image:height" content="800" />
+  <!-- 旧版微信/QQ 抓图专用 -->
+  <link rel="image_src" href="https://www.xiongdai1003.top/share-cover.jpg" />
 
   <!-- ====== 微信特有（部分微信版本会读） ====== -->
   <meta itemprop="name" content="WE DO! 熊坡林 × 戴明珠 · 2026.10.03" />
@@ -1286,9 +1290,28 @@
         gap: 16px;
       }
     }
+    /* 微信朋友圈抓图锚点：必须是真实 <img>，且不能用 display:none / visibility:hidden / opacity:0
+       （微信抓图器会跳过这些"不可见"元素），所以用移出视口的方式做视觉隐藏，
+       同时保持 300x300 以上的真实尺寸（朋友圈缩略图最小要求） */
+    .wx-share-cover {
+      position: absolute;
+      top: 0;
+      left: -9999px;
+      width: 300px;
+      height: 300px;
+      pointer-events: none;
+      border: 0;
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
+
+<!-- 微信分享抓图锚点：朋友圈分享的抓取器优先扫描 body 内的真实 <img> 标签，
+     本页所有照片都是 CSS background-image，爬虫抓不到，所以这里补一张锚点图。
+     必须是绝对 HTTPS 地址，且尺寸 >= 300x300（CSS 控制为 300x300 移出视口）。
+     注意：不能用 display:none / visibility:hidden / opacity:0，微信会跳过。 -->
+<img class="wx-share-cover" src="https://www.xiongdai1003.top/share-cover.jpg" alt="WE DO! Xiong & Dai 2026.10.03" width="800" height="800" />
 
 <!-- ============ 顶部跑马灯 (Gumroad 同款) ============ -->
 <div class="top-bar">
@@ -1552,12 +1575,12 @@
         </svg>
       </div>
       <div class="map-name">修江国际大酒店</div>
-      <div class="map-addr">江西省九江市修水县</div>
+      <div class="map-addr">江西省九江市修水县 · 宁红大道99-2号</div>
       <div class="map-metro">XIUSHUI · JIUJIANG · JIANGXI</div>
 
       <div class="btns">
-        <a class="btn btn-yellow" href="https://ditu.amap.com/search?query_type=TQUERY&query=%E4%BF%AE%E6%B0%B4%E5%8E%BF%E4%BF%AE%E6%B1%9F%E5%9B%BD%E9%99%85%E5%A4%A7%E9%85%92%E5%BA%97&city=440300" target="_blank">高德导航 →</a>
-        <a class="btn btn-pink" href="https://map.baidu.com/poi/%E4%BF%AE%E6%B0%B4%E4%BF%AE%E6%B1%9F%E5%9B%BD%E9%99%85%E5%A4%A7%E9%85%92%E5%BA%97/@12755373.852137653,3358583.5512789628,19z?uid=f46e34e8c1f5e19922f01773&ugc_type=3&ugc_ver=1&device_ratio=2&compat=1&en_uid=f46e34e8c1f5e19922f01773&pcevaname=pc4.1&querytype=detailConInfo&da_src=shareurl" target="_blank">百度地图 →</a>
+        <a class="btn btn-yellow" href="https://uri.amap.com/marker?position=114.575731,29.024183&name=%E4%BF%AE%E6%B1%9F%E5%9B%BD%E9%99%85%E5%A4%A7%E9%85%92%E5%BA%97&src=wedding&coordinate=gaode&callnative=1" target="_blank" rel="noopener noreferrer">高德导航 →</a>
+        <a class="btn btn-pink" href="https://api.map.baidu.com/marker?location=29.024183,114.575731&title=%E4%BF%AE%E6%B1%9F%E5%9B%BD%E9%99%85%E5%A4%A7%E9%85%92%E5%BA%97&content=%E6%B1%9F%E8%A5%BF%E7%9C%81%E4%B9%9D%E6%B1%9F%E5%B8%82%E4%BF%AE%E6%B0%B4%E5%8E%BF%E5%AE%81%E7%BA%A2%E5%A4%A7%E9%81%9399-2%E5%8F%B7&output=html&coord_type=gcj02&src=webapp.openAPIdemo" target="_blank" rel="noopener noreferrer">百度地图 →</a>
       </div>
     </div>
   </div>
@@ -1857,7 +1880,7 @@
   //    生成地址: https://github.com/settings/tokens/new → 勾选 repo 或 public_repo
   const GITHUB_OWNER = 'Mumu99';
   const GITHUB_REPO = 'wedding-wishes';
-  const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE';
+  const GITHUB_TOKEN = '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';
   const GITHUB_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`;
 
   // 管理员模式：URL 中包含 isadmin=true 或 isAdmin=true 时启用
