@@ -2508,16 +2508,9 @@
       }
 
       // ===== Wishes（GitHub Issues 方案 · 完全免费）=====
-      // ⚠️ 请替换以下配置：
-      // 1. GITHUB_OWNER: 你的 GitHub 用户名
-      // 2. GITHUB_REPO: 用来存祝福的仓库名（需要是 public 仓库）
-      // 3. GITHUB_TOKEN: Personal Access Token（只需 issues 写权限）
-      //    生成地址: https://github.com/settings/tokens/new → 勾选 repo 或 public_repo
-      const GITHUB_OWNER = "Mumu99";
-      const GITHUB_REPO = "wedding-wishes";
-      const GITHUB_TOKEN =
-        "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";
-      const GITHUB_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`;
+      // 祝福数据通过同域边缘函数代理（/api/wishes）获取与提交
+      // token 仅保存在 EdgeOne 边缘函数的环境变量 GITHUB_TOKEN 中，不暴露给前端
+      const WISHES_API = "/api/wishes";
 
       // 管理员模式：URL 中包含 isadmin=true 或 isAdmin=true 时启用
       const _params = new URLSearchParams(window.location.search);
@@ -2571,11 +2564,10 @@
       async function deleteWish(issueNumber, cardEl) {
         if (!confirm("确定要删除这条祝福吗？")) return;
         try {
-          const res = await fetch(`${GITHUB_API}/${issueNumber}`, {
+          const res = await fetch(`${WISHES_API}?id=${issueNumber}`, {
             method: "PATCH",
             headers: {
               Accept: "application/vnd.github.v3+json",
-              Authorization: `Bearer ${GITHUB_TOKEN}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ state: "closed" }),
@@ -2834,15 +2826,11 @@
       // 加载所有祝福
       async function loadWishes() {
         try {
-          const res = await fetch(
-            `${GITHUB_API}?state=open&labels=wish&per_page=100&sort=created&direction=desc`,
-            {
-              headers: {
-                Accept: "application/vnd.github.v3+json",
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-              },
+          const res = await fetch(WISHES_API, {
+            headers: {
+              Accept: "application/vnd.github.v3+json",
             },
-          );
+          });
           if (!res.ok) throw new Error("加载失败");
           const issues = await res.json();
           renderWishWall(issues);
@@ -2996,11 +2984,10 @@
         submitBtn.textContent = "发送中...";
 
         try {
-          const res = await fetch(GITHUB_API, {
+          const res = await fetch(WISHES_API, {
             method: "POST",
             headers: {
               Accept: "application/vnd.github.v3+json",
-              Authorization: `Bearer ${GITHUB_TOKEN}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
